@@ -15,7 +15,7 @@ License:      GPLv2
 Group:        Documentation/SuSE
 Autoreqprov:  on
 Version:      1.0
-Release:      DEV.20100916.3
+Release:      1
 Source:       %{name}-%{version}.tar.gz
 Summary:      Supportconfig Plugin for SUSE Studio
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build

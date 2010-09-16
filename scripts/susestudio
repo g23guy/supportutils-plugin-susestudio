@@ -8,7 +8,7 @@
 # Modified:    2010 Sep 16
 #############################################################
 
-SVER=0.0.3
+SVER=1.0.0
 RCFILE="/opt/supportconfig/resources/scplugin.rc"
 LOG_LINES=500	#0 means include the entire file
 
