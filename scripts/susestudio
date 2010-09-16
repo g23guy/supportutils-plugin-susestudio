@@ -8,7 +8,7 @@
 # Modified:    2010 Sep 16
 #############################################################
 
-SVER=0.0.2
+SVER=0.0.3
 RCFILE="/opt/supportconfig/resources/scplugin.rc"
 LOG_LINES=500	#0 means include the entire file
 
@@ -47,13 +47,19 @@ section_header "UI Server"
 pconf_files "/srv/studio/options.yml"
 plog_files $LOG_LINES "/srv/studio/ui-server/log/cron_job.log /srv/studio/ui-server/log/production.log /srv/studio/ui-server/log/scheduler.log"
 
-section_header "Testdrive"
-pconf_files "/srv/studio/testdrive/config/options.yml"
-plog_files $LOG_LINES "/srv/studio/testdrive/log/production.log"
-
 section_header "Kiwi Runner"
 pconf_files "/srv/studio/kiwi-runner/config/options.yml"
 plog_files $LOG_LINES "/srv/studio/kiwi-runner/log/backgroundrb.log /srv/studio/kiwi-runner/log/production.log"
+
+section_header "Appliance Build Logs"
+[ -d /studio/runner/log ] && FILES=$(find /studio/runner/log -type f) || FILES=""
+if [ -n "$FILES" ]; then
+	plog_files $LOG_LINES $FILES
+fi
+
+section_header "Testdrive"
+pconf_files "/srv/studio/testdrive/config/options.yml"
+plog_files $LOG_LINES "/srv/studio/testdrive/log/production.log"
 
 section_header "RMDS"
 pconf_files "/srv/studio/rmds.conf"
@@ -63,19 +69,13 @@ section_header "THOTH"
 pconf_files "/srv/studio/thoth.conf"
 plugin_command "grep thoth /var/log/messages"
 
+section_header "Apache Logs"
+plog_files $LOG_LINES "/var/log/apache2/rcapache2.out /var/log/apache2/error_log"
+
 section_header "Nagios"
 pconf_files "/etc/nagios/nagios.cfg /etc/nagios/objects/contacts.cfg"
 
 section_header "Munin"
 pconf_files "/etc/munin/munin.conf"
-
-section_header "Apache Logs"
-plog_files $LOG_LINES "/var/log/apache2/rcapache2.out /var/log/apache2/error_log"
-
-section_header "Appliance Build Logs"
-[ -d /studio/runner/log ] && FILES=$(find /studio/runner/log -type f) || FILES=""
-if [ -n "$FILES" ]; then
-	plog_files $LOG_LINES $FILES
-fi
 
 
