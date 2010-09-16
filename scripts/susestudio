@@ -8,18 +8,17 @@
 # Modified:    2010 Sep 16
 #############################################################
 
-SVER=0.0.1
+SVER=0.0.2
 RCFILE="/opt/supportconfig/resources/scplugin.rc"
 LOG_LINES=500	#0 means include the entire file
-LOG_DIR="/var/log/simba"
-CONF_DIR="/var/lib/simba/sbs/conf"
 
 [ -s $RCFILE ] && . $RCFILE || { echo "ERROR: Initializing resource file: $RCFILE"; exit 1; }
 
 section_header "Supportconfig Plugin for SUSE Studio, v${SVER}"
-RPMLIST="susestudio-ui-server susestudio-thoth sle-studioonsite-release susestudio-rmds flashpolicyd-studio susestudio-common susestudio susestudio-masquerade susestudio-clicfs susestudio-image-helpers susestudio-testdrive Susestudio-kiwi-runner nagios-www nagios-plugins-extras nagios Nagios-plugins munin Munin-node clicfs"
+RPMLIST="susestudio-ui-server susestudio-thoth sle-studioonsite-release susestudio-rmds flashpolicyd-studio susestudio-common susestudio susestudio-masquerade susestudio-clicfs susestudio-image-helpers susestudio-testdrive susestudio-kiwi-runner nagios-www nagios-plugins-extras nagios nagios-plugins munin munin-node clicfs"
+DAEMONLIST="munin-node nagios rmds studio_backgroundrb studio_crontick studio_delayed_job studio_sphinx suse_studio_custom thoth"
 
-if rpm -q susestudio susestudio-common &>/dev/null; then
+if ! rpm -q susestudio susestudio-common &>/dev/null; then
   echo "ERROR: SUSE Studio package(s) not installed"
   echo
   exit 111
@@ -31,9 +30,18 @@ do
 done
 
 plugin_command "cat /proc/meminfo"
+plugin_command "free -k"
 plugin_command "df -h"
+plugin_command "netstat -nlp"
 
-section_header "Apache"
+for i in $DAEMONLIST
+do
+	if [ -s /etc/init.d/$i ]; then
+		plugin_command "chkconfig -l $i"
+		plugin_command "/etc/init.d/$i status"
+		
+	fi
+done
 
 section_header "UI Server"
 pconf_files "/srv/studio/options.yml"
